@@ -18,7 +18,7 @@ use crate::fat::FAT;
 
 #[derive(Copy, Clone)]
 pub struct Volume<T>
-    where T: BlockDevice + Clone + Copy,
+    where T: BlockDevice + Clone,
           <T as BlockDevice>::Error: core::fmt::Debug
 {
     device: T,
@@ -86,7 +86,7 @@ impl<T> Volume<T>
 
 /// implement Debug Display for Volume
 impl<T> Debug for Volume<T>
-    where T: BlockDevice + Clone + Copy,
+    where T: BlockDevice + Clone,
           <T as BlockDevice>::Error: core::fmt::Debug {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         f.debug_struct("Volume")
