@@ -20,9 +20,9 @@ pub enum WriteType {
     Append,
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 pub struct File<'a, T>
-    where T: BlockDevice + Clone + Copy,
+    where T: BlockDevice + Clone,
           <T as BlockDevice>::Error: core::fmt::Debug {
     pub(crate) device: T,
     pub(crate) bpb: &'a BIOSParameterBlock,
@@ -33,7 +33,7 @@ pub struct File<'a, T>
 
 /// To Read File Per Sector By Iterator
 pub struct ReadIter<'a, T>
-    where T: BlockDevice + Clone + Copy,
+    where T: BlockDevice + Clone ,
           <T as BlockDevice>::Error: core::fmt::Debug {
     device: T,
     buffer: [u8; BUFFER_SIZE],
@@ -45,7 +45,7 @@ pub struct ReadIter<'a, T>
 }
 
 impl<'a, T> File<'a, T>
-    where T: BlockDevice + Clone + Copy,
+    where T: BlockDevice + Clone,
           <T as BlockDevice>::Error: core::fmt::Debug {
     /// Read File To Buffer, Return File Length
     pub fn read(&self, buf: &mut [u8]) -> Result<usize, FileError> {
@@ -279,7 +279,7 @@ impl<'a, T> File<'a, T>
 }
 
 impl<'a, T> Iterator for ReadIter<'a, T>
-    where T: BlockDevice + Clone + Copy,
+    where T: BlockDevice + Clone,
           <T as BlockDevice>::Error: core::fmt::Debug {
     type Item = ([u8; BUFFER_SIZE], usize);
 
