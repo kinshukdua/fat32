@@ -29,7 +29,7 @@ impl<T> Volume<T>
     where T: BlockDevice + Clone,
           <T as BlockDevice>::Error: core::fmt::Debug {
     /// Make volume from device which implement BlockDevice
-    pub fn new(device: T) -> Volume<T> {
+    pub fn new(mut device: T) -> Volume<T> {
         let mut buf = [0; BUFFER_SIZE];
         device.read(&mut buf, 0, 1).unwrap();
 
