@@ -90,17 +90,17 @@ impl<'a, T> File<'a, T>
             }
             WriteType::Append => {
                 let mut fat = self.fat.clone();
-                let exist_fat = fat.count();
+                let exist_fat = fat.clone().count();
                 fat.clone().find(|_| false);
 
                 let (new_cluster, index) = self.fill_left_sector(buf, fat.clone().current_cluster);
                 if new_cluster {
                     let buf = &buf[index..];
-                    let bl = self.fat.blank_cluster();
+                    let bl = self.fat.clone().blank_cluster();
 
-                    fat.write(fat.current_cluster, bl);
+                    fat.clone().write(fat.clone().current_cluster, bl);
                     self.write_blank_fat(num_cluster - exist_fat);
-                    fat.refresh(bl);
+                    fat.clone().refresh(bl);
 
                     self._write(buf, &fat);
                 }
