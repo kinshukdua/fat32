@@ -86,7 +86,7 @@ impl<'a, T> File<'a, T>
             WriteType::OverWritten => {
                 self.fat.clone().map(|mut f| f.write(f.current_cluster, 0)).last();
                 self.write_blank_fat(num_cluster);
-                self._write(buf, &self.fat);
+                self._write(buf, &mut self.fat);
             }
             WriteType::Append => {
                 let mut fat = self.fat.clone();
