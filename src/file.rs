@@ -48,7 +48,7 @@ impl<'a, T> File<'a, T>
     where T: BlockDevice + Clone,
           <T as BlockDevice>::Error: core::fmt::Debug {
     /// Read File To Buffer, Return File Length
-    pub fn read(&self, buf: &mut [u8]) -> Result<usize, FileError> {
+    pub fn read(&mut self, buf: &mut [u8]) -> Result<usize, FileError> {
         let length = self.detail.length().unwrap();
         let spc = self.bpb.sector_per_cluster_usize();
         let cluster_size = spc * BUFFER_SIZE;
@@ -153,7 +153,7 @@ impl<'a, T> File<'a, T>
     }
 
     /// Fill Left Sector
-    fn fill_left_sector(&self, buf: &[u8], cluster: u32) -> (bool, usize) {
+    fn fill_left_sector(&mut self, buf: &[u8], cluster: u32) -> (bool, usize) {
         let spc = self.bpb.sector_per_cluster_usize();
         let length = self.detail.length().unwrap();
         let get_used_sector = |len: usize| if len % (spc * BUFFER_SIZE) == 0 && length != 0 {
@@ -234,7 +234,7 @@ impl<'a, T> File<'a, T>
     }
 
     /// Basic Write Function
-    fn _write(&self, buf: &[u8], fat: &FAT<T>) {
+    fn _write(&mut self, buf: &[u8], fat: &FAT<T>) {
         let spc = self.bpb.sector_per_cluster_usize();
         let mut buf_write = [0; BUFFER_SIZE];
         let mut write_count = get_needed_sector(buf.len());
