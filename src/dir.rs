@@ -279,7 +279,7 @@ impl<'a, T> Dir<'a, T>
     }
 
     /// Clean Sectors In Cluster, To Avoid Dirty Data
-    fn clean_cluster_data(&self, cluster: u32) {
+    fn clean_cluster_data(&mut self, cluster: u32) {
         let spc = self.bpb.sector_per_cluster_usize();
         for i in 0..spc {
             let offset = self.bpb.offset(cluster) + i * BUFFER_SIZE;
@@ -290,7 +290,7 @@ impl<'a, T> Dir<'a, T>
     }
 
     /// Add '.' AND '..' Item
-    fn add_dot_item(&self, cluster: u32) {
+    fn add_dot_item(&mut self, cluster: u32) {
         let mut buffer = [0; BUFFER_SIZE];
 
         let mut value = [0x20; 11];
@@ -429,13 +429,13 @@ impl<'a, T> DirIter<'a, T>
                          1).unwrap();
     }
 
-    pub(crate) fn update(&self) {
+    pub(crate) fn update(&mut self) {
         self.device.write(&self.buffer,
                           self.offset_value(),
                           1).unwrap();
     }
 
-    fn clean_new_cluster_data(&self, cluster: u32) {
+    fn clean_new_cluster_data(&mut self, cluster: u32) {
         let spc = self.bpb.sector_per_cluster_usize();
         for i in 0..spc {
             let offset = self.bpb.offset(cluster) + i * BUFFER_SIZE;
