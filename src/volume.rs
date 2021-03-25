@@ -74,11 +74,11 @@ impl<T> Volume<T>
     /// Cd root dir, its Dir<T> Type
     pub fn root_dir(&self) -> Dir<T> {
         Dir::<T> {
-            device: self.device,
+            device: self.device.clone(),
             bpb: &self.bpb,
             detail: DirectoryItem::root_dir(self.bpb.root_cluster),
             fat: FAT::new(self.bpb.root_cluster,
-                          self.device,
+                          self.device.clone(),
                           self.bpb.fat1()),
         }
     }
