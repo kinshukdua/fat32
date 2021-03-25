@@ -51,7 +51,7 @@ mod fat32 {
         WriteError,
     }
 
-    #[derive(Debug, Copy, Clone)]
+    #[derive(Debug, Clone)]
     struct Device {
         handle: *mut c_void,
     }
