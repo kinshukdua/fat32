@@ -24,15 +24,15 @@ pub enum DirError {
 }
 
 /// Define Operation Type
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub enum OpType {
     Dir,
     File,
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 pub struct Dir<'a, T>
-    where T: BlockDevice + Clone + Copy,
+    where T: BlockDevice + Clone,
           <T as BlockDevice>::Error: core::fmt::Debug {
     pub(crate) device: T,
     pub(crate) bpb: &'a BIOSParameterBlock,
@@ -41,7 +41,7 @@ pub struct Dir<'a, T>
 }
 
 impl<'a, T> Dir<'a, T>
-    where T: BlockDevice + Clone + Copy,
+    where T: BlockDevice + Clone,
           <T as BlockDevice>::Error: core::fmt::Debug {
     /// Delete Dir
     pub fn delete_dir(&mut self, dir: &str) -> Result<(), DirError> {
@@ -307,9 +307,9 @@ impl<'a, T> Dir<'a, T>
 }
 
 /// To Iterate Dir
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 pub struct DirIter<'a, T>
-    where T: BlockDevice + Clone + Copy,
+    where T: BlockDevice + Clone,
           <T as BlockDevice>::Error: core::fmt::Debug {
     device: T,
     fat: FAT<T>,
@@ -321,7 +321,7 @@ pub struct DirIter<'a, T>
 }
 
 impl<'a, T> DirIter<'a, T>
-    where T: BlockDevice + Clone + Copy,
+    where T: BlockDevice + Clone,
           <T as BlockDevice>::Error: core::fmt::Debug {
     pub(crate) fn new(device: T, fat: FAT<T>, bpb: &BIOSParameterBlock)
                       -> DirIter<T> {
@@ -448,7 +448,7 @@ impl<'a, T> DirIter<'a, T>
 
 /// Implement Iterator For DirIter
 impl<'a, T> Iterator for DirIter<'a, T>
-    where T: BlockDevice + Clone + Copy,
+    where T: BlockDevice + Clone,
           <T as BlockDevice>::Error: core::fmt::Debug {
     type Item = DirectoryItem;
 
