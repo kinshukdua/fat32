@@ -325,12 +325,12 @@ impl<'a, T> DirIter<'a, T>
           <T as BlockDevice>::Error: core::fmt::Debug {
     pub(crate) fn new(device: T, fat: FAT<T>, bpb: &BIOSParameterBlock)
                       -> DirIter<T> {
-        let mut fat2 = fat.clone();
+        let mut fat = fat.clone();
         fat.next();
 
         DirIter::<T> {
             device,
-            fat2,
+            fat: fat.clone(),
             bpb,
             offset: bpb.offset(fat.clone().current_cluster),
             sector_offset: 0,
