@@ -15,7 +15,7 @@ version = "0.3"
 features = ["fileapi", "winioctl", "ioapiset"]
 
 [dependencies]
-block_device = "0.1"
+block_device = {git = "https://github.com/kinshukdua/block_device"}
 
 [features]
 default = ["512"]
