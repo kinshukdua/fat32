@@ -57,7 +57,7 @@ impl<'a, T> File<'a, T>
         if buf.len() < length { return Err(FileError::BufTooSmall); }
 
         let mut index = 0;
-        self.fat.map(|f| {
+        self.fat.clone().map(|f| {
             let offset = self.bpb.offset(f.current_cluster);
             let end = if (length - index) < cluster_size {
                 let bytes_left = length % cluster_size;
@@ -84,16 +84,16 @@ impl<'a, T> File<'a, T>
 
         match write_type {
             WriteType::OverWritten => {
-                self.fat.map(|mut f| f.write(f.current_cluster, 0)).last();
+                self.fat.clone().map(|mut f| f.write(f.current_cluster, 0)).last();
                 self.write_blank_fat(num_cluster);
                 self._write(buf, &self.fat);
             }
             WriteType::Append => {
-                let mut fat = self.fat;
+                let mut fat = self.fat.clone();
                 let exist_fat = fat.count();
-                fat.find(|_| false);
+                fat.clone().find(|_| false);
 
-                let (new_cluster, index) = self.fill_left_sector(buf, fat.current_cluster);
+                let (new_cluster, index) = self.fill_left_sector(buf, fat.clone().current_cluster);
                 if new_cluster {
                     let buf = &buf[index..];
                     let bl = self.fat.blank_cluster();
@@ -119,10 +119,10 @@ impl<'a, T> File<'a, T>
     pub fn read_per_sector(&self) -> ReadIter<T> {
         let left_length = self.detail.length().unwrap();
         ReadIter::<T> {
-            device: self.device,
+            device: self.device.clone(),
             buffer: [0; BUFFER_SIZE],
             bpb: self.bpb,
-            fat: self.fat,
+            fat: self.fat.clone(),
             left_length,
             read_count: 0,
             need_count: get_needed_sector(left_length),
@@ -209,8 +209,8 @@ impl<'a, T> File<'a, T>
 
     /// Update File Length
     fn update_length(&mut self, length: usize) {
-        let fat = FAT::new(self.dir_cluster, self.device, self.bpb.fat1());
-        let mut iter = DirIter::new(self.device, fat, self.bpb);
+        let fat = FAT::new(self.dir_cluster, self.device.clone(), self.bpb.fat1());
+        let mut iter = DirIter::new(self.device.clone(), fat, self.bpb);
         iter.find(|d| {
             !d.is_deleted() && !d.is_lfn() && d.cluster() == self.detail.cluster()
         }).unwrap();
@@ -243,7 +243,7 @@ impl<'a, T> File<'a, T>
         };
 
         let mut w = 0;
-        fat.map(|f| {
+        fat.clone().map(|f| {
             let count = if write_count / spc > 0 {
                 write_count -= spc;
                 spc
