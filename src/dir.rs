@@ -330,7 +330,7 @@ impl<'a, T> DirIter<'a, T>
 
         DirIter::<T> {
             device,
-            fat,
+            fat.clone();,
             bpb,
             offset: bpb.offset(fat.clone().current_cluster),
             sector_offset: 0,
