@@ -124,7 +124,7 @@ impl<T> Iterator for FAT<T>
 
         Some((Self {
             next_cluster,
-            ..(*self)
-        }).clone())
+            ..(*self).clone()
+        }).clone()).clone()
     }
 }
