@@ -2,9 +2,9 @@ use block_device::BlockDevice;
 use crate::BUFFER_SIZE;
 use crate::tool::read_le_u32;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 pub struct FAT<T>
-    where T: BlockDevice + Clone + Copy,
+    where T: BlockDevice + Clone,
           <T as BlockDevice>::Error: core::fmt::Debug {
     device: T,
     fat_offset: usize,
@@ -16,7 +16,7 @@ pub struct FAT<T>
 }
 
 impl<T> FAT<T>
-    where T: BlockDevice + Clone + Copy,
+    where T: BlockDevice + Clone,
           <T as BlockDevice>::Error: core::fmt::Debug {
     pub(crate) fn new(cluster: u32, device: T, fat_offset: usize) -> Self {
         Self {
@@ -88,7 +88,7 @@ impl<T> FAT<T>
 }
 
 impl<T> Iterator for FAT<T>
-    where T: BlockDevice + Clone + Copy,
+    where T: BlockDevice + Clone,
           <T as BlockDevice>::Error: core::fmt::Debug {
     type Item = Self;
 
