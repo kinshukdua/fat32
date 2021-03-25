@@ -16,7 +16,7 @@ use crate::dir::Dir;
 use crate::directory_item::DirectoryItem;
 use crate::fat::FAT;
 
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 pub struct Volume<T>
     where T: BlockDevice + Clone,
           <T as BlockDevice>::Error: core::fmt::Debug
@@ -26,7 +26,7 @@ pub struct Volume<T>
 }
 
 impl<T> Volume<T>
-    where T: BlockDevice + Clone + Copy,
+    where T: BlockDevice + Clone,
           <T as BlockDevice>::Error: core::fmt::Debug {
     /// Make volume from device which implement BlockDevice
     pub fn new(device: T) -> Volume<T> {
