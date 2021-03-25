@@ -1,6 +1,6 @@
 [package]
 name = "fat32"
-version = "0.2.17"
+version = "0.3.0"
 authors = ["spxg <itsme@unsafe.me>"]
 edition = "2018"
 description = "FAT32 FileSystem Library"
