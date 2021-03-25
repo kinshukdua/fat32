@@ -24,7 +24,7 @@ pub enum DirError {
 }
 
 /// Define Operation Type
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub enum OpType {
     Dir,
     File,
@@ -70,10 +70,10 @@ impl<'a, T> Dir<'a, T>
             None => Err(DirError::NoMatchFile),
             Some(di) => if di.is_file() {
                 let fat = FAT::new(di.cluster(),
-                                   self.device,
+                                   self.device.clone(),
                                    self.bpb.fat1());
                 Ok(File::<T> {
-                    device: self.device,
+                    device: self.device.clone(),
                     bpb: self.bpb,
                     dir_cluster: self.detail.cluster(),
                     detail: di,
@@ -92,10 +92,10 @@ impl<'a, T> Dir<'a, T>
             None => Err(DirError::NoMatchDir),
             Some(di) => if di.is_dir() {
                 let fat = FAT::new(di.cluster(),
-                                   self.device,
+                                   self.device.clone(),
                                    self.bpb.fat1());
                 Ok(Self {
-                    device: self.device,
+                    device: self.device.clone(),
                     bpb: self.bpb,
                     detail: di,
                     fat,
@@ -108,7 +108,7 @@ impl<'a, T> Dir<'a, T>
 
     /// Check if file or dir is exist or not, Return Option Type
     pub fn exist(&self, value: &str) -> Option<DirectoryItem> {
-        let mut iter = DirIter::new(self.device, self.fat, self.bpb);
+        let mut iter = DirIter::new(self.device.clone(), self.fat.clone(), self.bpb);
 
         match sfn_or_lfn(value) {
             NameType::SFN => iter.find(|d| d.sfn_equal(value)),
@@ -215,7 +215,7 @@ impl<'a, T> Dir<'a, T>
     /// Basic Delete Function
     fn delete(&mut self, value: &str, delete_type: OpType) -> Result<(), DirError> {
         if is_illegal(value) { return Err(DirError::IllegalChar); }
-        let mut iter = DirIter::new(self.device, self.fat, self.bpb);
+        let mut iter = DirIter::new(self.device.clone(), self.fat.clone(), self.bpb);
 
         match self.exist_iter(&mut iter, value) {
             None => return match delete_type {
@@ -254,8 +254,8 @@ impl<'a, T> Dir<'a, T>
     /// Delete ALL File And Dir Which Included Deleted Dir
     fn delete_in_dir(&self, cluster: u32) {
         let fat_offset = self.bpb.fat1();
-        let fat = FAT::new(cluster, self.device, fat_offset);
-        let mut iter = DirIter::new(self.device, fat, self.bpb);
+        let fat = FAT::new(cluster, self.device.clone(), fat_offset);
+        let mut iter = DirIter::new(self.device.clone(), fat, self.bpb);
         loop {
             if let Some(d) = iter.next() {
                 if d.is_dir() { self.delete_in_dir(d.cluster()); }
@@ -272,7 +272,7 @@ impl<'a, T> Dir<'a, T>
 
     /// Write Directory Item
     fn write_directory_item(&self, di: DirectoryItem) {
-        let mut iter = DirIter::new(self.device, self.fat, self.bpb);
+        let mut iter = DirIter::new(self.device.clone(), self.fat.clone(), self.bpb);
         iter.find(|_| false);
         iter.update_item(&di.bytes());
         iter.update();
@@ -325,7 +325,7 @@ impl<'a, T> DirIter<'a, T>
           <T as BlockDevice>::Error: core::fmt::Debug {
     pub(crate) fn new(device: T, fat: FAT<T>, bpb: &BIOSParameterBlock)
                       -> DirIter<T> {
-        let mut fat = fat;
+        let mut fat = fat.clone();
         fat.next();
 
         DirIter::<T> {
